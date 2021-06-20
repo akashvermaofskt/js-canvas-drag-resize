@@ -31,12 +31,13 @@ let offset = {};
 let isDragging = false;
 let points = [];
 let numPoints = 6;
-const types = ["text", "circle", "text", "circle", "circle", "img"];
+let dragHandle = null;
 
-color = utils.getRndColor();
-function draw() {
-  var canvas = document.getElementById("canvas"),
-    context = canvas.getContext("2d");
+const types = ["text", "circle", "text", "circle", "circle", "img"];
+const color = utils.getRndColor();
+
+function draw(canvas) {
+  let context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
   function boundary() {
     context.beginPath();
@@ -108,8 +109,9 @@ function draw() {
 }
 
 window.onload = function () {
-  (width = canvas.width = window.innerWidth),
-    (height = canvas.height = window.innerHeight);
+  let canvas = document.getElementById("canvas");
+  let width = (canvas.width = window.innerWidth);
+  let height = (canvas.height = window.innerHeight);
   for (var i = 0; i < numPoints; i += 1) {
     var p = {
       x: Math.random() * width,
@@ -121,7 +123,7 @@ window.onload = function () {
     };
     points.push(p);
   }
-  draw();
+  draw(canvas);
 
   document.body.addEventListener("mousedown", function (event) {
     for (var i = 0; i < numPoints; i += 1) {
@@ -136,17 +138,17 @@ window.onload = function () {
       }
     }
   });
-  draw();
+  draw(canvas);
 
   function onMouseMove(event) {
     dragHandle.x = event.clientX - offset.x;
     dragHandle.y = event.clientY - offset.y;
-    draw();
+    draw(canvas);
   }
-  function onMouseUp(event) {
+  function onMouseUp() {
     document.body.removeEventListener("mousemove", onMouseMove);
     document.body.removeEventListener("mouseup", onMouseUp);
     isDragging = false;
-    draw();
+    draw(canvas);
   }
 };
