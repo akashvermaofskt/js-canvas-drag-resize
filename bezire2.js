@@ -39,7 +39,7 @@ const color = utils.getRndColor();
 function draw(canvas) {
   let context = canvas.getContext("2d");
   context.clearRect(0, 0, canvas.width, canvas.height);
-  function boundary() {
+  function boundary(p) {
     context.beginPath();
     context.moveTo(p.x, p.y);
     context.lineTo(p.x, p.y - p.h);
@@ -50,7 +50,7 @@ function draw(canvas) {
     context.lineWidth = 11;
     context.strokeStyle = "rgba(25, 90, 85, 7.5)";
   }
-  function boundaryC() {
+  function boundaryC(p) {
     context.beginPath();
     context.moveTo(p.x + p.w, p.y);
     context.lineTo(p.x + p.w, p.y + p.h);
@@ -62,7 +62,7 @@ function draw(canvas) {
     context.lineWidth = 11;
     context.strokeStyle = "rgba(25, 90, 85, 7.5)";
   }
-  function boundaryI() {
+  function boundaryI(p) {
     context.beginPath();
     context.moveTo(p.x, p.y);
     context.lineTo(p.x, p.y + p.h);
@@ -76,8 +76,8 @@ function draw(canvas) {
 
   context.beginPath();
   context.moveTo(points[0].x, points[0].y);
-  for (var i = 0; i < numPoints; i += 1) {
-    var p = points[i];
+  for (let i = 0; i < numPoints; i += 1) {
+    let p = points[i];
     if (isDragging && p === dragHandle) {
       context.shadowColor = color;
     }
@@ -87,7 +87,7 @@ function draw(canvas) {
       context.arc(p.x, p.y, p.r, 0, Math.PI * 2, false);
       context.fill();
       context.fillStyle = color;
-      boundaryC();
+      boundaryC(p);
       context.shadowColor = null;
       context.shadowOffsetX = null;
       context.shadowOffsetY = null;
@@ -97,13 +97,13 @@ function draw(canvas) {
       context.fillText("Hello world", p.x, p.y, p.w);
       context.fill();
       context.fillStyle = color;
-      boundary();
+      boundary(p);
     } else if (p.type == "img") {
-      var img1 = new Image(); // Image constructor
+      let img1 = new Image(); // Image constructor
       img1.src = "https://mdn.mozillademos.org/files/5395/backdrop.png";
       context.drawImage(img1, p.x, p.y, p.w, p.h);
-      console.log(img1);
-      boundaryI();
+      // console.log(img1);
+      boundaryI(p);
     }
   }
 }
@@ -112,8 +112,8 @@ window.onload = function () {
   let canvas = document.getElementById("canvas");
   let width = (canvas.width = window.innerWidth);
   let height = (canvas.height = window.innerHeight);
-  for (var i = 0; i < numPoints; i += 1) {
-    var p = {
+  for (let i = 0; i < numPoints; i += 1) {
+    let p = {
       x: Math.random() * width,
       y: Math.random() * height,
       r: utils.randomNumber(20, 40),
@@ -126,8 +126,8 @@ window.onload = function () {
   draw(canvas);
 
   document.body.addEventListener("mousedown", function (event) {
-    for (var i = 0; i < numPoints; i += 1) {
-      var p = points[i];
+    for (let i = 0; i < numPoints; i += 1) {
+      let p = points[i];
       if (utils.circlePointCollision(event.clientX, event.clientY, p)) {
         isDragging = true;
         document.body.addEventListener("mousemove", onMouseMove);
