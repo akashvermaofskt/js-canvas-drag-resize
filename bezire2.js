@@ -33,7 +33,7 @@ let points = [];
 let numPoints = 6;
 const types = ["text", "circle", "text", "circle", "circle", "img"];
 
-color = getRndColor();
+color = utils.getRndColor();
 function draw() {
   var canvas = document.getElementById("canvas"),
     context = canvas.getContext("2d");
@@ -114,7 +114,7 @@ window.onload = function () {
     var p = {
       x: Math.random() * width,
       y: Math.random() * height,
-      r: randomNumber(20, 40),
+      r: utils.randomNumber(20, 40),
       type: types[i],
       h: 50,
       w: 100,
