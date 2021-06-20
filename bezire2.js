@@ -14,6 +14,19 @@ const utils = {
     }
     return false;
   },
+  clickOnTopEdge: function (x, y, p) {
+    if (x > p.x && x < p.x + p.w && y > p.y - p.h - 11 && y < p.y - p.h + 11) {
+      return true;
+    }
+    return false;
+  },
+
+  clickOnRightEdge: function (x, y, p) {
+    if (y > p.y - p.h && y < p.y && x > p.x + p.w - 11 && x < p.x + p.x + 11) {
+      return true;
+    }
+    return false;
+  },
 
   randomNumber: function (min, max) {
     return Math.random() * (max - min) + min;
@@ -27,13 +40,29 @@ const utils = {
   },
 };
 
+function point(x, y) {
+  return {
+    x: x,
+    y: y,
+  };
+}
+
+function dist(p1, p2) {
+  return Math.sqrt(
+    (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)
+  );
+}
+
 let offset = {};
 let isDragging = false;
 let points = [];
-let numPoints = 6;
+
 let dragHandle = null;
+let resize = null;
 
 const types = ["text", "circle", "text", "circle", "circle", "img"];
+// const types = ["text"];
+let numPoints = types.length;
 const color = utils.getRndColor();
 
 function draw(canvas) {
@@ -128,7 +157,23 @@ window.onload = function () {
   document.body.addEventListener("mousedown", function (event) {
     for (let i = 0; i < numPoints; i += 1) {
       let p = points[i];
-      if (utils.circlePointCollision(event.clientX, event.clientY, p)) {
+      if (utils.clickOnTopEdge(event.clientX, event.clientY, p)) {
+        document.body.addEventListener("mousemove", onMouseMove);
+        document.body.addEventListener("mouseup", onMouseUp);
+        dragHandle = p;
+        offset.x = event.clientX - p.x;
+        offset.y = event.clientY - p.y;
+        p.h = dist(point(p.x, p.y), point(event.clientX, event.clientY));
+        resize = "top";
+      } else if (utils.clickOnRightEdge(event.clientX, event.clientY, p)) {
+        document.body.addEventListener("mousemove", onMouseMove);
+        document.body.addEventListener("mouseup", onMouseUp);
+        dragHandle = p;
+        offset.x = event.clientX - p.x;
+        offset.y = event.clientY - p.y;
+        p.w = dist(point(p.x, p.y), point(event.clientX, event.clientY));
+        resize = "right";
+      } else if (utils.circlePointCollision(event.clientX, event.clientY, p)) {
         isDragging = true;
         document.body.addEventListener("mousemove", onMouseMove);
         document.body.addEventListener("mouseup", onMouseUp);
@@ -141,14 +186,27 @@ window.onload = function () {
   draw(canvas);
 
   function onMouseMove(event) {
-    dragHandle.x = event.clientX - offset.x;
-    dragHandle.y = event.clientY - offset.y;
+    if (isDragging == true) {
+      dragHandle.x = event.clientX - offset.x;
+      dragHandle.y = event.clientY - offset.y;
+    } else if (resize == "top") {
+      dragHandle.h = dist(
+        point(dragHandle.x, dragHandle.y),
+        point(event.clientX, event.clientY)
+      );
+    } else if (resize == "right") {
+      dragHandle.w = dist(
+        point(dragHandle.x, dragHandle.y),
+        point(event.clientX, event.clientY)
+      );
+    }
     draw(canvas);
   }
   function onMouseUp() {
     document.body.removeEventListener("mousemove", onMouseMove);
     document.body.removeEventListener("mouseup", onMouseUp);
     isDragging = false;
+    resize = null;
     draw(canvas);
   }
 };
