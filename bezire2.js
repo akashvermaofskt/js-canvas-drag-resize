@@ -22,7 +22,34 @@ const utils = {
   },
 
   clickOnRightEdge: function (x, y, p) {
+    // console.log("right ", x, y, p.x, p.y, p.w, p.h);
     if (y > p.y - p.h && y < p.y && x > p.x + p.w - 11 && x < p.x + p.x + 11) {
+      return true;
+    }
+    return false;
+  },
+  clickOnBottomEdge: function (x, y, p) {
+    if (
+      x > p.x + p.h &&
+      x < p.x + p.h + p.w &&
+      y > p.y + p.h - 11 &&
+      y < p.y + p.h + 11
+    ) {
+      // console.log(
+      //   "..botoom" + x > p.x &&
+      //     x < p.x + p.w &&
+      //     y > p.y + p.h - 11 &&
+      //     y < p.y + p.h + 11
+      // );
+      return true;
+    }
+    return false;
+  },
+  clickOnLeftEdge: function (x, y, p) {
+    if (y < p.y && y > p.y - p.h && x > p.x - 11 && x < p.x + 11) {
+      // console.log(
+      //   "...letf" + y < p.y && y > p.y - p.h && x > p.x - 11 && x < p.x + 11
+      // );
       return true;
     }
     return false;
@@ -40,19 +67,6 @@ const utils = {
   },
 };
 
-function point(x, y) {
-  return {
-    x: x,
-    y: y,
-  };
-}
-
-function dist(p1, p2) {
-  return Math.sqrt(
-    (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)
-  );
-}
-
 let offset = {};
 let isDragging = false;
 let points = [];
@@ -60,7 +74,7 @@ let points = [];
 let dragHandle = null;
 let resize = null;
 
-const types = ["text", "circle", "text", "circle", "circle", "img"];
+const types = ["text"];
 // const types = ["text"];
 let numPoints = types.length;
 const color = utils.getRndColor();
@@ -157,13 +171,14 @@ window.onload = function () {
   document.body.addEventListener("mousedown", function (event) {
     for (let i = 0; i < numPoints; i += 1) {
       let p = points[i];
+      console.log(utils.clickOnLeftEdge(event.clientX, event.clientY, p));
       if (utils.clickOnTopEdge(event.clientX, event.clientY, p)) {
         document.body.addEventListener("mousemove", onMouseMove);
         document.body.addEventListener("mouseup", onMouseUp);
         dragHandle = p;
         offset.x = event.clientX - p.x;
         offset.y = event.clientY - p.y;
-        p.h = dist(point(p.x, p.y), point(event.clientX, event.clientY));
+        p.h = p.y - event.clientY;
         resize = "top";
       } else if (utils.clickOnRightEdge(event.clientX, event.clientY, p)) {
         document.body.addEventListener("mousemove", onMouseMove);
@@ -171,8 +186,29 @@ window.onload = function () {
         dragHandle = p;
         offset.x = event.clientX - p.x;
         offset.y = event.clientY - p.y;
-        p.w = dist(point(p.x, p.y), point(event.clientX, event.clientY));
+        p.w = event.clientX - p.x;
         resize = "right";
+      }
+      // else if (utils.clickOnBottomEdge(event.clientX, event.clientY, p)) {
+      //   console.log("....->bottomedge" + event.clientX, event.clientY, p);
+      //   document.body.addEventListener("mousemove", onMouseMove);
+      //   document.body.addEventListener("mouseup", onMouseUp);
+      //   dragHandle = p;
+      //   offset.x = event.clientX - p.x;
+      //   offset.y = event.clientY - p.y;
+      //   p.h = dist(point(p.x, p.y), point(event.clientX, event.clientY));
+      //   resize = "bottom";
+      // } else
+      else if (utils.clickOnLeftEdge(event.clientX, event.clientY, p)) {
+        console.log("....->leftedge" + event.clientX, event.clientY, p);
+        document.body.addEventListener("mousemove", onMouseMove);
+        document.body.addEventListener("mouseup", onMouseUp);
+        dragHandle = p;
+        offset.x = event.clientX - p.x;
+        offset.y = event.clientY - p.y;
+        p.w = p.w + (p.x - event.clientX);
+        p.x = event.clientX;
+        resize = "left";
       } else if (utils.circlePointCollision(event.clientX, event.clientY, p)) {
         isDragging = true;
         document.body.addEventListener("mousemove", onMouseMove);
@@ -190,15 +226,19 @@ window.onload = function () {
       dragHandle.x = event.clientX - offset.x;
       dragHandle.y = event.clientY - offset.y;
     } else if (resize == "top") {
-      dragHandle.h = dist(
-        point(dragHandle.x, dragHandle.y),
-        point(event.clientX, event.clientY)
-      );
+      dragHandle.h = dragHandle.y - event.clientY;
     } else if (resize == "right") {
-      dragHandle.w = dist(
-        point(dragHandle.x, dragHandle.y),
-        point(event.clientX, event.clientY)
-      );
+      dragHandle.w = event.clientX - dragHandle.x;
+    }
+    // else if (resize == "bottom") {
+    //   dragHandle.h = dist(
+    //     point(dragHandle.x, dragHandle.y),
+    //     point(event.clientX, event.clientY)
+    //   );
+    // } else
+    else if (resize == "left") {
+      dragHandle.w = dragHandle.w + dragHandle.x - event.clientX;
+      dragHandle.x = event.clientX;
     }
     draw(canvas);
   }
