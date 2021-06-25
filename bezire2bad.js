@@ -139,7 +139,6 @@ function draw(canvas) {
     context.lineWidth = b;
     context.strokeStyle = "rgba(25, 90, 85, 7.5)";
   }
-
   for (let i = 0; i < points.length; i += 1) {
     let p = points[i];
 
@@ -225,18 +224,18 @@ window.onload = function () {
     //   font: "px serif",
     //   color: "green",
     // },
-    // {
-    //   type: "circle",
-    //   x: 385,
-    //   y: 235,
-    //   h: 85,
-    //   w: 100,
-    //   radius: 50,
-    //   l1: 0,
-    //   l2: Math.PI * 2,
-    //   async: "false",
-    //   color: "green",
-    // },
+    {
+      type: "circle",
+      x: 385,
+      y: 235,
+      h: 85,
+      w: 100,
+      radius: 50,
+      l1: 0,
+      l2: Math.PI * 2,
+      async: "false",
+      color: "green",
+    },
     // {
     //   type: "triangle",
     //   x: 336,
@@ -245,31 +244,31 @@ window.onload = function () {
     //   w: 100,
     //   color: "red",
     // },
-    {
-      type: "square",
-      x: 536,
-      y: 400,
-      h: 100,
-      w: 100,
-      color: "black",
-    },
-    {
-      type: "rectangle",
-      x: 736,
-      y: 336,
-      h: 100,
-      w: 150,
-      color: "purple",
-    },
-    {
-      type: "img",
-      x: 836,
-      y: 236,
-      w: 85,
-      h: 99,
-      url: "https://mdn.mozillademos.org/files/5395/backdrop.png",
-      color: "red",
-    },
+    // {
+    //   type: "square",
+    //   x: 536,
+    //   y: 400,
+    //   h: 100,
+    //   w: 100,
+    //   color: "black",
+    // },
+    // {
+    //   type: "rectangle",
+    //   x: 736,
+    //   y: 336,
+    //   h: 100,
+    //   w: 150,
+    //   color: "purple",
+    // },
+    // {
+    //   type: "img",
+    //   x: 836,
+    //   y: 236,
+    //   w: 85,
+    //   h: 99,
+    //   url: "https://mdn.mozillademos.org/files/5395/backdrop.png",
+    //   color: "red",
+    // },
   ];
 
   draw(canvas);
@@ -278,6 +277,7 @@ window.onload = function () {
     console.log("CLICK ", event.clientX, event.clientY);
     for (let i = 0; i < points.length; i += 1) {
       let p = points[i];
+      console.log(p);
       if (
         utils.clickOnTopEdge(event.clientX, event.clientY, p) &&
         p.type == "text"
